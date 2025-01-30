@@ -8,18 +8,23 @@ from typing import TYPE_CHECKING, Any, Union
 import pandasai.pandas as pd
 
 # Use a conditional import for type checking
-if TYPE_CHECKING:
-    try:
-        import polars as pl
+# if TYPE_CHECKING:
+#     try:
+#         import polars as pl
 
-        PolarsDataFrame = pl.DataFrame
-        PolarsSeries = pl.Series
-    except ImportError:
-        PolarsDataFrame = Any
-        PolarsSeries = Any
-else:
-    PolarsDataFrame = Any
-    PolarsSeries = Any
+#         PolarsDataFrame = pl.DataFrame
+#         PolarsSeries = pl.Series
+#     except ImportError:
+#         PolarsDataFrame = Any
+#         PolarsSeries = Any
+# else:
+#     PolarsDataFrame = Any
+#     PolarsSeries = Any
+
+import polars as pl
+
+PolarsDataFrame = pl.DataFrame
+PolarsSeries = pl.Series
 
 from pydantic import BaseModel
 
@@ -132,7 +137,7 @@ class PolarsConnector(BaseConnector):
         Return the number of rows in the data source that the connector is
         connected to.
         """
-        return len(self.pandas_df) if self.pandas_df.index else 0
+        return 0 if self.pandas_df.empty else self.pandas_df.shape[0]
 
     @cached_property
     def columns_count(self):
@@ -140,7 +145,7 @@ class PolarsConnector(BaseConnector):
         Return the number of columns in the data source that the connector is
         connected to.
         """
-        return len(self.pandas_df.columns) if self.pandas_df.columns else 0
+        return 0 if self.pandas_df.empty else self.pandas_df.shape[1]
 
     @property
     def column_hash(self):
